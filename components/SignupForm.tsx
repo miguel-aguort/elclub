@@ -40,39 +40,57 @@ export function SignupForm() {
   }
 
   if (state === 'ok') {
-    return <p role="status">You're on the list! We'll be in touch.</p>
+    return (
+      <p role="status" className="signup-message signup-message--success">
+        🎉 You're on the list! We'll be in touch.
+      </p>
+    )
   }
 
   if (state === 'duplicate') {
-    return <p role="status">You're already on the list!</p>
+    return (
+      <p role="status" className="signup-message signup-message--success">
+        👋 You're already on the list!
+      </p>
+    )
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <label htmlFor="signup-name">Name</label>
-      <input id="signup-name" value={name} onChange={(e) => setName(e.target.value)} required />
+    <form onSubmit={handleSubmit} className="signup-form">
+      <div className="form-field">
+        <label htmlFor="signup-name">Name</label>
+        <input id="signup-name" value={name} onChange={(e) => setName(e.target.value)} required />
+      </div>
 
-      <label htmlFor="signup-email">Email</label>
-      <input
-        id="signup-email"
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        required
-      />
+      <div className="form-field">
+        <label htmlFor="signup-email">Email</label>
+        <input
+          id="signup-email"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+      </div>
 
-      <label htmlFor="signup-phone">Phone (optional)</label>
-      <input id="signup-phone" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} />
+      <div className="form-field">
+        <label htmlFor="signup-phone">Phone (optional)</label>
+        <input id="signup-phone" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} />
+      </div>
 
       {state === 'invalid' && (
-        <p role="alert">
+        <p role="alert" className="form-error">
           {invalidField === 'email' ? 'Please enter a valid email address.' : 'Please enter your name.'}
         </p>
       )}
-      {state === 'error' && <p role="alert">Something went wrong, please try again.</p>}
+      {state === 'error' && (
+        <p role="alert" className="form-error">
+          Something went wrong, please try again.
+        </p>
+      )}
 
-      <button type="submit" disabled={state === 'submitting'}>
-        Join the community
+      <button type="submit" className="cta-button" disabled={state === 'submitting'}>
+        {state === 'submitting' ? 'Joining…' : 'Join the community'}
       </button>
     </form>
   )

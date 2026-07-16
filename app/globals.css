@@ -1,33 +1,289 @@
 :root {
   color-scheme: light dark;
-  font-family: system-ui, sans-serif;
+  font-family: -apple-system, "Segoe UI", system-ui, Roboto, Helvetica, Arial, sans-serif;
+
+  --color-bg: #f7f5f0;
+  --color-bg-alt: #ffffff;
+  --color-text: #1c2b21;
+  --color-text-muted: #56655c;
+  --color-primary: #2f5d45;
+  --color-primary-dark: #203f2f;
+  --color-accent: #d97b3f;
+  --color-border: #e1ddd2;
+  --shadow-card: 0 1px 3px rgba(28, 43, 33, 0.08), 0 8px 24px rgba(28, 43, 33, 0.06);
+  --radius: 14px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #14201a;
+    --color-bg-alt: #1b2b22;
+    --color-text: #ecf3ee;
+    --color-text-muted: #a9bcb0;
+    --color-primary: #6fbf94;
+    --color-primary-dark: #4d9c74;
+    --color-accent: #eb9c5f;
+    --color-border: #2b3d31;
+    --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.35), 0 8px 24px rgba(0, 0, 0, 0.3);
+  }
+}
+
+* {
+  box-sizing: border-box;
 }
 
 body {
   margin: 0;
-  line-height: 1.5;
+  line-height: 1.6;
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+h1,
+h2,
+h3 {
+  line-height: 1.2;
+  color: var(--color-text);
+}
+
+a {
+  color: var(--color-primary);
 }
 
 section {
-  padding: 2rem 1.5rem;
-  max-width: 720px;
+  padding: 3rem 1.5rem;
+  max-width: 960px;
   margin: 0 auto;
 }
 
-form {
+/* Header */
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  background: color-mix(in srgb, var(--color-bg) 85%, transparent);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.site-brand {
+  font-weight: 700;
+  font-size: 1.15rem;
+  letter-spacing: 0.02em;
+}
+
+.header-instagram-link {
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.header-instagram-link:hover {
+  text-decoration: underline;
+}
+
+/* Hero */
+
+.hero {
+  text-align: center;
+  max-width: 720px;
+  padding-top: 4.5rem;
+  padding-bottom: 4.5rem;
+}
+
+.hero h1 {
+  font-size: clamp(2.25rem, 5vw, 3.25rem);
+  margin-bottom: 0.75rem;
+}
+
+.hero p {
+  font-size: 1.15rem;
+  color: var(--color-text-muted);
+  margin-bottom: 2rem;
+}
+
+/* Buttons */
+
+.cta-button {
+  display: inline-block;
+  background: var(--color-primary);
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 0.85rem 1.75rem;
+  border: none;
+  border-radius: 999px;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: var(--shadow-card);
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.cta-button:hover {
+  background: var(--color-primary-dark);
+  transform: translateY(-2px);
+}
+
+.cta-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Activities */
+
+.activities-section {
+  text-align: center;
+}
+
+.activities-section h2 {
+  font-size: 1.75rem;
+  margin-bottom: 2rem;
+}
+
+.activities-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+  text-align: left;
+}
+
+.activity-card {
+  background: var(--color-bg-alt);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+  padding: 2rem 1.5rem !important;
+  margin: 0 !important;
+  max-width: none !important;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.activity-card:hover {
+  transform: translateY(-4px);
+}
+
+.activity-icon {
+  display: block;
+  font-size: 2.25rem;
+  margin-bottom: 0.75rem;
+}
+
+.activity-card h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1.15rem;
+}
+
+.activity-card p {
+  margin: 0;
+  color: var(--color-text-muted);
+}
+
+/* Signup */
+
+.signup-section {
+  text-align: center;
+}
+
+.signup-section h2 {
+  font-size: 1.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.signup-form {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
-  max-width: 360px;
+  gap: 1.1rem;
+  max-width: 380px;
+  margin: 0 auto;
+  text-align: left;
+  background: var(--color-bg-alt);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+  padding: 2rem;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.form-field label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
 }
 
 input {
-  padding: 0.5rem;
+  padding: 0.65rem 0.85rem;
   font-size: 1rem;
+  font-family: inherit;
+  color: var(--color-text);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
 }
 
-button {
-  padding: 0.6rem 1rem;
-  font-size: 1rem;
-  cursor: pointer;
+input:focus {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 1px;
+}
+
+.signup-form .cta-button {
+  width: 100%;
+  text-align: center;
+}
+
+.signup-message {
+  max-width: 380px;
+  margin: 0 auto;
+  font-size: 1.1rem;
+  font-weight: 600;
+  padding: 1.5rem;
+  border-radius: var(--radius);
+}
+
+.signup-message--success {
+  background: var(--color-bg-alt);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-card);
+}
+
+.form-error {
+  margin: 0;
+  color: #b3261e;
+  font-size: 0.9rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  .form-error {
+    color: #ff8a80;
+  }
+}
+
+/* Footer */
+
+.site-footer {
+  text-align: center;
+  padding: 2.5rem 1.5rem;
+  border-top: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+}
+
+.footer-instagram-link {
+  display: inline-block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.footer-instagram-link:hover {
+  text-decoration: underline;
 }
