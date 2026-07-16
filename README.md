@@ -15,7 +15,7 @@ Visit http://localhost:3000.
 
 ## Configuration
 
-Copy `.env.local.example` to `.env.local` and set `NEXT_PUBLIC_INSTAGRAM_URL`
+Copy `.env.local.example` to `.env.local` and set `INSTAGRAM_URL`
 to the club's real Instagram profile URL before deploying.
 
 ## Deployment (GCP e2-micro, Always Free tier)
@@ -49,7 +49,7 @@ runs on a Compute Engine VM rather than serverless/ephemeral compute.
          sudo docker pull gcr.io/<PROJECT_ID>/elclub-web && \
          sudo docker run -d --restart unless-stopped -p 80:3000 \
            -v /var/lib/elclub/data:/app/data \
-           -e NEXT_PUBLIC_INSTAGRAM_URL=https://instagram.com/<handle> \
+           -e INSTAGRAM_URL=https://instagram.com/<handle> \
            gcr.io/<PROJECT_ID>/elclub-web"
 
 5. Open port 80 in the firewall:
