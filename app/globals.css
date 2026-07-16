@@ -1,0 +1,33 @@
+:root {
+  color-scheme: light dark;
+  font-family: system-ui, sans-serif;
+}
+
+body {
+  margin: 0;
+  line-height: 1.5;
+}
+
+section {
+  padding: 2rem 1.5rem;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-width: 360px;
+}
+
+input {
+  padding: 0.5rem;
+  font-size: 1rem;
+}
+
+button {
+  padding: 0.6rem 1rem;
+  font-size: 1rem;
+  cursor: pointer;
+}
