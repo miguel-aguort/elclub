@@ -1,1 +1,5 @@
-.worktrees/
+node_modules/
+.next/
+data/*.db
+data/*.db-journal
+.env*.local
