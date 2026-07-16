@@ -16,8 +16,8 @@ export function Hero() {
             <stop offset="100%" stopColor="#1c1712" />
           </linearGradient>
           <radialGradient id="hero-glow" cx="50%" cy="55%" r="55%">
-            <stop offset="0%" stopColor="#e0793f" stopOpacity="0.35" />
-            <stop offset="100%" stopColor="#e0793f" stopOpacity="0" />
+            <stop offset="0%" stopColor="#f5f5f2" stopOpacity="0.12" />
+            <stop offset="100%" stopColor="#f5f5f2" stopOpacity="0" />
           </radialGradient>
         </defs>
         <rect width="1440" height="500" fill="url(#hero-sky)" />
@@ -38,12 +38,18 @@ export function Hero() {
       <div className="hero-inner">
         <div className="hero-content">
           <p className="hero-eyebrow">La Pedriza · Manzanares El Real</p>
-          <h1>El Club!</h1>
-          <svg className="ridge-line" viewBox="0 0 400 60" preserveAspectRatio="none" aria-hidden="true">
-            <path d="M0,50 L55,40 L105,20 L145,6 L175,20 L200,10 L225,24 L260,40 L400,46" />
-          </svg>
+          <div className="wordmark">
+            <h1>El Club!</h1>
+            <svg className="ridge-line" viewBox="0 0 400 60" preserveAspectRatio="none" aria-hidden="true">
+              <path d="M0,50 L55,40 L105,20 L145,6 L175,20 L200,10 L225,24 L260,40 L400,46" />
+            </svg>
+          </div>
           <p className="hero-tagline">Trail running. Climbing. Biking. Join the community.</p>
-          <p className="hero-coords">40.7344° N &nbsp;·&nbsp; 3.9926° W</p>
+          <p className="hero-coords">
+            <span className="hero-coords-rule" aria-hidden="true" />
+            40.7344° N&nbsp;&nbsp;3.9926° W
+            <span className="hero-coords-rule" aria-hidden="true" />
+          </p>
           <a href="#signup" className="cta-button">
             Join the community
           </a>

@@ -2,14 +2,16 @@
   color-scheme: dark light;
   font-family: -apple-system, "Segoe UI", system-ui, Roboto, Helvetica, Arial, sans-serif;
 
-  /* Brand palette, taken from the club's own black/white mountain-ridge logo */
+  /* Monochrome Alpine Emblem: the aesthetic taken directly from the club's
+     own tee — pure black/white, no color, bold condensed type, thin
+     line-work. Buttons invert (bg/text swap) instead of using an accent
+     color, which is how the tee itself creates contrast. */
   --color-bg: #0d0d0d;
   --color-bg-alt: #1a1a1a;
   --color-text: #f5f5f2;
   --color-text-muted: #a3a39c;
-  --color-primary: #e0793f;
-  --color-primary-dark: #c76631;
-  --color-accent: #e0793f;
+  --color-invert-bg: #f5f5f2;
+  --color-invert-text: #0d0d0d;
   --color-border: #2c2c2a;
   --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.4), 0 8px 28px rgba(0, 0, 0, 0.35);
   --radius: 14px;
@@ -21,6 +23,8 @@
     --color-bg-alt: #ffffff;
     --color-text: #16160f;
     --color-text-muted: #56554c;
+    --color-invert-bg: #16160f;
+    --color-invert-text: #f7f5f0;
     --color-border: #e1ddd2;
     --shadow-card: 0 1px 3px rgba(28, 27, 20, 0.08), 0 8px 24px rgba(28, 27, 20, 0.06);
   }
@@ -45,7 +49,7 @@ h3 {
 }
 
 a {
-  color: var(--color-primary);
+  color: var(--color-text);
 }
 
 section {
@@ -131,6 +135,11 @@ section {
   margin: 0 0 0.5rem;
 }
 
+.wordmark {
+  position: relative;
+  display: inline-block;
+}
+
 .hero h1 {
   font-family: var(--font-display), sans-serif;
   font-weight: 400;
@@ -141,12 +150,16 @@ section {
   margin: 0;
 }
 
+/* The ridge line runs through the wordmark's lower third, echoing how the
+   line-art peak cuts across the letters on the actual tee print. */
 .ridge-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 8%;
   width: 100%;
-  max-width: 320px;
-  height: 32px;
-  margin: 0.75rem 0 1.25rem;
-  display: block;
+  height: 45%;
+  pointer-events: none;
 }
 
 .ridge-line path {
@@ -155,20 +168,33 @@ section {
   stroke-width: 2.5;
   stroke-linecap: round;
   stroke-linejoin: round;
+  opacity: 0.85;
 }
 
 .hero-tagline {
   font-size: 1.15rem;
   color: #c9c9c2;
-  margin: 0 0 0.5rem;
+  margin: 1.5rem 0 0.5rem;
 }
 
 .hero-coords {
-  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.75rem;
+  font-size: 0.8rem;
   font-variant-numeric: tabular-nums;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.08em;
   color: #c9c9c2;
   margin: 0 0 2rem;
+}
+
+.hero-coords-rule {
+  flex: 0 0 auto;
+  width: 1.75rem;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.6;
 }
 
 .hero-image {
@@ -188,9 +214,8 @@ section {
     text-align: center;
   }
 
-  .ridge-line {
-    margin-left: auto;
-    margin-right: auto;
+  .hero-coords {
+    justify-content: center;
   }
 
   .hero-image {
@@ -202,22 +227,38 @@ section {
 
 .cta-button {
   display: inline-block;
-  background: var(--color-primary);
-  color: #ffffff;
-  font-weight: 600;
-  font-size: 1rem;
+  background: var(--color-invert-bg);
+  color: var(--color-invert-text);
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
   padding: 0.85rem 1.75rem;
-  border: none;
+  border: 2px solid var(--color-invert-bg);
   border-radius: 999px;
   text-decoration: none;
   cursor: pointer;
   box-shadow: var(--shadow-card);
-  transition: transform 0.15s ease, background 0.15s ease;
+  transition: transform 0.15s ease, background 0.15s ease, color 0.15s ease;
 }
 
 .cta-button:hover {
-  background: var(--color-primary-dark);
+  background: transparent;
+  color: var(--color-invert-bg);
   transform: translateY(-2px);
+}
+
+/* The hero always sits on the dark backdrop artwork regardless of page
+   theme, so its button stays fixed white-on-black rather than inverting. */
+.hero .cta-button {
+  background: #f5f5f2;
+  color: #0d0d0d;
+  border-color: #f5f5f2;
+}
+
+.hero .cta-button:hover {
+  background: transparent;
+  color: #f5f5f2;
 }
 
 .cta-button:disabled {
@@ -267,6 +308,8 @@ section {
   display: block;
   font-size: 2.25rem;
   margin-bottom: 0.75rem;
+  /* Flattened to grayscale to stay within the monochrome brand palette */
+  filter: grayscale(1) contrast(1.1);
 }
 
 .activity-card h3 {
@@ -331,7 +374,7 @@ input {
 }
 
 input:focus {
-  outline: 2px solid var(--color-accent);
+  outline: 2px solid var(--color-text);
   outline-offset: 1px;
 }
 
