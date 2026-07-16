@@ -1,27 +1,35 @@
 export interface Activity {
   slug: string
+  number: string
   title: string
   description: string
-  icon?: string
+  image: string
+  icon: 'run' | 'climb' | 'bike'
 }
 
 export const activities: Activity[] = [
   {
-    slug: 'trail-running',
-    title: 'Trail Running',
-    description: 'Weekly group runs on the trails around the mountain, for every pace.',
-    icon: '🏃',
+    slug: 'carrera-de-montana',
+    number: '01',
+    title: 'Carrera de Montaña',
+    description: 'Salidas grupales semanales por los senderos de la sierra, para todos los ritmos.',
+    image: 'https://picsum.photos/id/1018/900/700?grayscale',
+    icon: 'run',
   },
   {
-    slug: 'climbing',
-    title: 'Climbing',
-    description: 'Sport and trad routes, indoor sessions, and outdoor trips for all levels.',
-    icon: '🧗',
+    slug: 'escalada',
+    number: '02',
+    title: 'Escalada',
+    description: 'Vías deportivas y clásicas, sesiones indoor y salidas a roca para todos los niveles.',
+    image: 'https://picsum.photos/id/1015/900/700?grayscale',
+    icon: 'climb',
   },
   {
-    slug: 'biking',
-    title: 'Biking',
-    description: 'Road and mountain biking routes, from casual rides to longer climbs.',
-    icon: '🚵',
+    slug: 'bici',
+    number: '03',
+    title: 'Bici',
+    description: 'Rutas de carretera y montaña, desde paseos tranquilos hasta subidas largas.',
+    image: 'https://picsum.photos/id/1016/900/700?grayscale',
+    icon: 'bike',
   },
 ]

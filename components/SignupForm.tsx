@@ -41,56 +41,73 @@ export function SignupForm() {
 
   if (state === 'ok') {
     return (
-      <p role="status" className="signup-message signup-message--success">
-        🎉 You're on the list! We'll be in touch.
-      </p>
+      <div role="status" className="signup-message signup-message--success">
+        <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M20 6L9 17l-5-5" />
+        </svg>
+        <p className="signup-message-title">¡Ya estás dentro!</p>
+        <p className="signup-message-body">Nos vemos en la montaña. Te escribimos pronto.</p>
+      </div>
     )
   }
 
   if (state === 'duplicate') {
     return (
-      <p role="status" className="signup-message signup-message--success">
-        👋 You're already on the list!
-      </p>
+      <div role="status" className="signup-message signup-message--success">
+        <p className="signup-message-title">Ya estabas en la lista</p>
+        <p className="signup-message-body">Te avisamos de la próxima salida.</p>
+      </div>
     )
   }
 
   return (
     <form onSubmit={handleSubmit} className="signup-form">
-      <div className="form-field">
-        <label htmlFor="signup-name">Name</label>
-        <input id="signup-name" value={name} onChange={(e) => setName(e.target.value)} required />
-      </div>
-
-      <div className="form-field">
-        <label htmlFor="signup-email">Email</label>
+      <label className="form-field">
+        Nombre
         <input
-          id="signup-email"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="Tu nombre"
+          required
+        />
+      </label>
+
+      <label className="form-field">
+        Email
+        <input
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          placeholder="tu@email.com"
           required
         />
-      </div>
+      </label>
 
-      <div className="form-field">
-        <label htmlFor="signup-phone">Phone (optional)</label>
-        <input id="signup-phone" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} />
-      </div>
+      <label className="form-field">
+        Teléfono (opcional)
+        <input
+          type="tel"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+          placeholder="+34 600 000 000"
+        />
+      </label>
 
       {state === 'invalid' && (
         <p role="alert" className="form-error">
-          {invalidField === 'email' ? 'Please enter a valid email address.' : 'Please enter your name.'}
+          {invalidField === 'email'
+            ? 'Introduce un email válido.'
+            : 'Introduce tu nombre.'}
         </p>
       )}
       {state === 'error' && (
         <p role="alert" className="form-error">
-          Something went wrong, please try again.
+          Algo ha fallado, inténtalo de nuevo.
         </p>
       )}
 
       <button type="submit" className="cta-button" disabled={state === 'submitting'}>
-        {state === 'submitting' ? 'Joining…' : 'Join the community'}
+        {state === 'submitting' ? 'Enviando…' : 'Únete a la comunidad'}
       </button>
     </form>
   )

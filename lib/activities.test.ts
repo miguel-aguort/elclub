@@ -2,9 +2,9 @@ import { describe, it, expect } from 'vitest'
 import { activities } from './activities'
 
 describe('activities', () => {
-  it('includes trail running, climbing, and biking', () => {
+  it('includes carrera de montaña, escalada, and bici', () => {
     const slugs = activities.map((a) => a.slug)
-    expect(slugs).toEqual(expect.arrayContaining(['trail-running', 'climbing', 'biking']))
+    expect(slugs).toEqual(expect.arrayContaining(['carrera-de-montana', 'escalada', 'bici']))
   })
 
   it('gives every activity a non-empty title and description', () => {

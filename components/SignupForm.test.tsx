@@ -16,13 +16,13 @@ describe('SignupForm', () => {
     const user = userEvent.setup()
     render(<SignupForm />)
 
-    await user.type(screen.getByLabelText(/name/i), 'Ana')
+    await user.type(screen.getByLabelText(/nombre/i), 'Ana')
     await user.type(screen.getByLabelText(/email/i), 'ana@example.com')
-    await user.type(screen.getByLabelText(/phone/i), '555-1234')
-    await user.click(screen.getByRole('button', { name: /join/i }))
+    await user.type(screen.getByLabelText(/tel[eé]fono/i), '555-1234')
+    await user.click(screen.getByRole('button', { name: /únete/i }))
 
     await waitFor(() => {
-      expect(screen.getByText(/you're on the list/i)).toBeInTheDocument()
+      expect(screen.getByText(/ya estás dentro/i)).toBeInTheDocument()
     })
     expect(fetch).toHaveBeenCalledWith('/api/subscribe', {
       method: 'POST',
@@ -39,12 +39,12 @@ describe('SignupForm', () => {
     const user = userEvent.setup()
     render(<SignupForm />)
 
-    await user.type(screen.getByLabelText(/name/i), 'Ana')
+    await user.type(screen.getByLabelText(/nombre/i), 'Ana')
     await user.type(screen.getByLabelText(/email/i), 'ana@example.com')
-    await user.click(screen.getByRole('button', { name: /join/i }))
+    await user.click(screen.getByRole('button', { name: /únete/i }))
 
     await waitFor(() => {
-      expect(screen.getByText(/already on the list/i)).toBeInTheDocument()
+      expect(screen.getByText(/ya estabas en la lista/i)).toBeInTheDocument()
     })
   })
 
@@ -53,12 +53,12 @@ describe('SignupForm', () => {
     const user = userEvent.setup()
     render(<SignupForm />)
 
-    await user.type(screen.getByLabelText(/name/i), 'Ana')
+    await user.type(screen.getByLabelText(/nombre/i), 'Ana')
     await user.type(screen.getByLabelText(/email/i), 'ana@example.com')
-    await user.click(screen.getByRole('button', { name: /join/i }))
+    await user.click(screen.getByRole('button', { name: /únete/i }))
 
     await waitFor(() => {
-      expect(screen.getByText(/please try again/i)).toBeInTheDocument()
+      expect(screen.getByText(/inténtalo de nuevo/i)).toBeInTheDocument()
     })
   })
 })
