@@ -1,30 +1,28 @@
 :root {
-  color-scheme: light dark;
+  color-scheme: dark light;
   font-family: -apple-system, "Segoe UI", system-ui, Roboto, Helvetica, Arial, sans-serif;
 
-  --color-bg: #f7f5f0;
-  --color-bg-alt: #ffffff;
-  --color-text: #1c2b21;
-  --color-text-muted: #56655c;
-  --color-primary: #2f5d45;
-  --color-primary-dark: #203f2f;
-  --color-accent: #d97b3f;
-  --color-border: #e1ddd2;
-  --shadow-card: 0 1px 3px rgba(28, 43, 33, 0.08), 0 8px 24px rgba(28, 43, 33, 0.06);
+  /* Brand palette, taken from the club's own black/white mountain-ridge logo */
+  --color-bg: #0d0d0d;
+  --color-bg-alt: #1a1a1a;
+  --color-text: #f5f5f2;
+  --color-text-muted: #a3a39c;
+  --color-primary: #e0793f;
+  --color-primary-dark: #c76631;
+  --color-accent: #e0793f;
+  --color-border: #2c2c2a;
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.4), 0 8px 28px rgba(0, 0, 0, 0.35);
   --radius: 14px;
 }
 
-@media (prefers-color-scheme: dark) {
+@media (prefers-color-scheme: light) {
   :root {
-    --color-bg: #14201a;
-    --color-bg-alt: #1b2b22;
-    --color-text: #ecf3ee;
-    --color-text-muted: #a9bcb0;
-    --color-primary: #6fbf94;
-    --color-primary-dark: #4d9c74;
-    --color-accent: #eb9c5f;
-    --color-border: #2b3d31;
-    --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.35), 0 8px 24px rgba(0, 0, 0, 0.3);
+    --color-bg: #f7f5f0;
+    --color-bg-alt: #ffffff;
+    --color-text: #16160f;
+    --color-text-muted: #56554c;
+    --color-border: #e1ddd2;
+    --shadow-card: 0 1px 3px rgba(28, 27, 20, 0.08), 0 8px 24px rgba(28, 27, 20, 0.06);
   }
 }
 
@@ -72,9 +70,11 @@ section {
 }
 
 .site-brand {
-  font-weight: 700;
-  font-size: 1.15rem;
-  letter-spacing: 0.02em;
+  font-family: var(--font-display), sans-serif;
+  font-weight: 400;
+  font-size: 1.35rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
 }
 
 .header-instagram-link {
@@ -90,21 +90,112 @@ section {
 /* Hero */
 
 .hero {
-  text-align: center;
-  max-width: 720px;
+  position: relative;
+  overflow: hidden;
+  max-width: none;
+  width: 100%;
+  margin: 0;
+  padding: 0 1.5rem;
+}
+
+.hero-backdrop {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.hero-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 3rem;
+  max-width: 960px;
+  margin: 0 auto;
   padding-top: 4.5rem;
   padding-bottom: 4.5rem;
 }
 
-.hero h1 {
-  font-size: clamp(2.25rem, 5vw, 3.25rem);
-  margin-bottom: 0.75rem;
+.hero-content {
+  flex: 1 1 320px;
 }
 
-.hero p {
+.hero-eyebrow {
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #c9c9c2;
+  margin: 0 0 0.5rem;
+}
+
+.hero h1 {
+  font-family: var(--font-display), sans-serif;
+  font-weight: 400;
+  font-size: clamp(2.75rem, 7vw, 4.5rem);
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  color: #f5f5f2;
+  margin: 0;
+}
+
+.ridge-line {
+  width: 100%;
+  max-width: 320px;
+  height: 32px;
+  margin: 0.75rem 0 1.25rem;
+  display: block;
+}
+
+.ridge-line path {
+  fill: none;
+  stroke: #f5f5f2;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.hero-tagline {
   font-size: 1.15rem;
-  color: var(--color-text-muted);
-  margin-bottom: 2rem;
+  color: #c9c9c2;
+  margin: 0 0 0.5rem;
+}
+
+.hero-coords {
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+  color: #c9c9c2;
+  margin: 0 0 2rem;
+}
+
+.hero-image {
+  flex: 0 0 auto;
+  width: min(320px, 40vw);
+  height: auto;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: var(--radius);
+  border: 1px solid rgba(245, 245, 242, 0.15);
+  box-shadow: var(--shadow-card);
+}
+
+@media (max-width: 720px) {
+  .hero-inner {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .ridge-line {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .hero-image {
+    width: min(260px, 60vw);
+  }
 }
 
 /* Buttons */
@@ -142,7 +233,11 @@ section {
 }
 
 .activities-section h2 {
-  font-size: 1.75rem;
+  font-family: var(--font-display), sans-serif;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  font-size: 1.9rem;
   margin-bottom: 2rem;
 }
 
@@ -191,7 +286,11 @@ section {
 }
 
 .signup-section h2 {
-  font-size: 1.75rem;
+  font-family: var(--font-display), sans-serif;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  font-size: 1.9rem;
   margin-bottom: 1.5rem;
 }
 

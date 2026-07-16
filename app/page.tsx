@@ -9,7 +9,7 @@ export default function Home() {
   return (
     <>
       <header className="site-header">
-        <span className="site-brand">El Club</span>
+        <span className="site-brand">El Club!</span>
         <InstagramLink className="header-instagram-link" />
       </header>
       <main>
