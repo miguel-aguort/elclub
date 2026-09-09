@@ -134,6 +134,30 @@ Once the club has a real domain, point it at the CloudFront distribution
 and request an ACM certificate for it (also free) instead of relying on
 the `cloudfront.net` address.
 
+### Custom domain (in progress)
+
+The club now owns `elclubmanzanareselreal.es` (registered at Arsys). Setup
+so far:
+
+| Resource | Value |
+|---|---|
+| Domain | `elclubmanzanareselreal.es` |
+| Registrar | Arsys — nameservers delegated to Route 53 |
+| Route 53 hosted zone | `Z0570686MWDO6UJFNOZY`, with alias A-records for the apex and `www` pointing at the CloudFront distribution |
+| ACM certificate | `arn:aws:acm:us-east-1:862330372611:certificate/8072e154-7c37-4c4b-81bf-6c0bcc4f341b` (`us-east-1`, required for CloudFront), covering `elclubmanzanareselreal.es` and `www.elclubmanzanareselreal.es`, DNS validation records already added to the hosted zone |
+
+Remaining steps, once the Arsys nameserver change has propagated to the
+`.es` registry (can take from minutes up to 24-48h) and the certificate
+status flips from `PENDING_VALIDATION` to `ISSUED`:
+
+1. Update the CloudFront distribution (`E13HY3D347X2FT`) to add
+   `elclubmanzanareselreal.es` and `www.elclubmanzanareselreal.es` as
+   aliases, and switch its viewer certificate from the default
+   `*.cloudfront.net` one to the ACM certificate above (SNI-only).
+2. Verify both the apex and `www` serve the site over HTTPS with a valid
+   certificate, then share the real domain instead of the
+   `cloudfront.net` URL.
+
 ### Checking logs
 
     ssh -i ~/.ssh/elclub-key.pem ec2-user@54.229.19.96
