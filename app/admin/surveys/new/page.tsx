@@ -1,6 +1,16 @@
-import { SurveyBuilderForm } from '@/components/SurveyBuilderForm'
+export const dynamic = 'force-dynamic'
 
-export default function NewSurveyPage() {
+import { cookies } from 'next/headers'
+import { redirect } from 'next/navigation'
+import { SurveyBuilderForm } from '@/components/SurveyBuilderForm'
+import { isValidSessionCookie, ADMIN_SESSION_COOKIE } from '@/lib/admin-auth'
+
+export default async function NewSurveyPage() {
+  const cookieStore = await cookies()
+  if (!isValidSessionCookie(cookieStore.get(ADMIN_SESSION_COOKIE)?.value)) {
+    redirect('/admin/login')
+  }
+
   return (
     <main className="signup-section">
       <div className="signup-inner">

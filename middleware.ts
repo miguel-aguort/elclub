@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server'
 import { hasValidSession } from '@/lib/admin-auth'
 
+// Required: lib/admin-auth.ts uses node:crypto, which the Edge Runtime (the default for middleware) cannot bundle.
 export const runtime = 'nodejs'
 
 export const config = {

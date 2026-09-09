@@ -3,6 +3,7 @@ import type Database from 'better-sqlite3'
 export type QuestionType = 'single_choice' | 'text'
 
 export interface QuestionInput {
+  id?: number
   prompt: string
   type: QuestionType
   options?: string[]
@@ -144,7 +145,7 @@ function loadQuestions(db: Database.Database, surveyId: number): Question[] {
   }))
 }
 
-function loadSurveyRow(db: Database.Database, where: string, value: string | number) {
+function loadSurveyRow(db: Database.Database, where: 'id' | 'slug', value: string | number) {
   return db.prepare(`SELECT id, slug, title, created_at FROM surveys WHERE ${where} = ?`).get(value) as
     | { id: number; slug: string; title: string; created_at: string }
     | undefined
@@ -188,26 +189,46 @@ export function updateSurvey(db: Database.Database, id: number, input: SurveyInp
     return { status: 'invalid', error }
   }
 
-  const deleteOptions = db.prepare(
-    'DELETE FROM survey_question_options WHERE question_id IN (SELECT id FROM survey_questions WHERE survey_id = ?)'
+  const existingQuestionIds = new Set(
+    (db.prepare('SELECT id FROM survey_questions WHERE survey_id = ?').all(id) as Array<{ id: number }>).map(
+      (row) => row.id
+    )
   )
-  const deleteQuestions = db.prepare('DELETE FROM survey_questions WHERE survey_id = ?')
-  const updateTitle = db.prepare('UPDATE surveys SET title = ? WHERE id = ?')
+  const keptIds = new Set(input.questions.filter((q) => q.id != null).map((q) => q.id as number))
+  const idsToDelete = [...existingQuestionIds].filter((qid) => !keptIds.has(qid))
+
+  const updateSurveyTitle = db.prepare('UPDATE surveys SET title = ? WHERE id = ?')
+  const updateQuestion = db.prepare(
+    'UPDATE survey_questions SET prompt = ?, type = ?, position = ? WHERE id = ?'
+  )
   const insertQuestion = db.prepare(
     'INSERT INTO survey_questions (survey_id, prompt, type, required, position) VALUES (?, ?, ?, 1, ?)'
   )
+  const deleteQuestionOptions = db.prepare('DELETE FROM survey_question_options WHERE question_id = ?')
+  const deleteQuestion = db.prepare('DELETE FROM survey_questions WHERE id = ?')
   const insertOption = db.prepare(
     'INSERT INTO survey_question_options (question_id, label, position) VALUES (?, ?, ?)'
   )
 
   db.transaction(() => {
-    deleteOptions.run(id)
-    deleteQuestions.run(id)
-    updateTitle.run(input.title.trim(), id)
+    updateSurveyTitle.run(input.title.trim(), id)
+
+    idsToDelete.forEach((qid) => {
+      deleteQuestionOptions.run(qid)
+      deleteQuestion.run(qid)
+    })
+
     input.questions.forEach((question, index) => {
-      const questionId = Number(
-        insertQuestion.run(id, question.prompt.trim(), question.type, index).lastInsertRowid
-      )
+      let questionId: number
+      if (question.id != null && existingQuestionIds.has(question.id)) {
+        updateQuestion.run(question.prompt.trim(), question.type, index, question.id)
+        questionId = question.id
+        deleteQuestionOptions.run(questionId)
+      } else {
+        questionId = Number(
+          insertQuestion.run(id, question.prompt.trim(), question.type, index).lastInsertRowid
+        )
+      }
       if (question.type === 'single_choice') {
         ;(question.options ?? [])
           .filter((o) => o.trim())

@@ -74,6 +74,27 @@ describe('validateResponseInput / submitResponse', () => {
     const answers = JSON.parse((rows[0] as { answers_json: string }).answers_json)
     expect(answers[q1.id]).toBe('Domingo')
   })
+
+  it('rejects a non-string answer instead of throwing', () => {
+    const error = validateResponseInput(survey, { email: 'ana@example.com', answers: { [survey.questions[0].id]: 42 as unknown as string } })
+    expect(error).toEqual({ field: 'question', questionId: survey.questions[0].id })
+  })
+
+  it('rejects a non-string email instead of throwing', () => {
+    const error = validateResponseInput(survey, { email: ['ana@example.com'] as unknown as string, answers: {} })
+    expect(error).toEqual({ field: 'email', reason: 'invalid' })
+  })
+
+  it('drops answer keys that do not correspond to a real question', () => {
+    const [q1, q2] = survey.questions
+    submitResponse(db, survey, {
+      email: 'ana@example.com',
+      answers: { [q1.id]: 'Sábado', [q2.id]: 'Hola', '99999': 'inyectado', extra: 'basura' } as unknown as Record<string, string>,
+    })
+    const row = db.prepare('SELECT answers_json FROM survey_responses WHERE email = ?').get('ana@example.com') as { answers_json: string }
+    const stored = JSON.parse(row.answers_json)
+    expect(Object.keys(stored).sort()).toEqual([String(q1.id), String(q2.id)].sort())
+  })
 })
 
 describe('getResponses / tallyResponses', () => {

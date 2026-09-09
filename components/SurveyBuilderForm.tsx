@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import type { QuestionType, Survey } from '@/lib/surveys'
 
 interface BuilderQuestion {
+  id?: number
   prompt: string
   type: QuestionType
   options: string[]
@@ -15,6 +16,7 @@ function initialQuestions(survey?: Survey): BuilderQuestion[] {
     return [{ prompt: '', type: 'single_choice', options: ['', ''] }]
   }
   return survey.questions.map((q) => ({
+    id: q.id,
     prompt: q.prompt,
     type: q.type,
     options: q.options.length ? q.options.map((o) => o.label) : ['', ''],
@@ -54,6 +56,7 @@ export function SurveyBuilderForm({ survey }: { survey?: Survey }) {
     const payload = {
       title,
       questions: questions.map((q) => ({
+        id: q.id,
         prompt: q.prompt,
         type: q.type,
         options: q.type === 'single_choice' ? q.options : undefined,

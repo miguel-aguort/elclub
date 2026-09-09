@@ -19,14 +19,14 @@ export function validateResponseInput(
   survey: Survey,
   input: Partial<ResponseInput>
 ): ResponseValidationError | null {
-  if (!input.email || !EMAIL_PATTERN.test(input.email)) {
+  if (!input.email || typeof input.email !== 'string' || !EMAIL_PATTERN.test(input.email)) {
     return { field: 'email', reason: 'invalid' }
   }
-  const answers = input.answers ?? {}
+  const answers = input.answers && typeof input.answers === 'object' ? input.answers : {}
   for (const question of survey.questions) {
     if (!question.required) continue
-    const answer = answers[String(question.id)]
-    if (!answer || !answer.trim()) {
+    const answer = (answers as Record<string, unknown>)[String(question.id)]
+    if (typeof answer !== 'string' || !answer.trim()) {
       return { field: 'question', questionId: question.id }
     }
   }
@@ -44,12 +44,20 @@ export function submitResponse(db: Database.Database, survey: Survey, input: Res
     return { status: 'invalid', error: { field: 'email', reason: 'not_member' } }
   }
 
+  const sanitizedAnswers: Record<string, string> = {}
+  for (const question of survey.questions) {
+    const raw = (input.answers as Record<string, unknown> | undefined)?.[String(question.id)]
+    if (typeof raw === 'string' && raw.trim()) {
+      sanitizedAnswers[String(question.id)] = raw
+    }
+  }
+
   db.prepare(
     `INSERT INTO survey_responses (survey_id, email, answers_json)
      VALUES (?, ?, ?)
      ON CONFLICT(survey_id, email)
      DO UPDATE SET answers_json = excluded.answers_json, updated_at = datetime('now')`
-  ).run(survey.id, email, JSON.stringify(input.answers))
+  ).run(survey.id, email, JSON.stringify(sanitizedAnswers))
 
   return { status: 'ok' }
 }

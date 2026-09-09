@@ -2,6 +2,8 @@ import { describe, it, expect, beforeEach } from 'vitest'
 import type Database from 'better-sqlite3'
 import { createDb } from './db'
 import { validateSurveyInput, createSurvey, getSurveyBySlug, getSurveyById, listSurveys, updateSurvey, deleteSurvey } from './surveys'
+import { addSubscriber } from './subscribers'
+import { submitResponse, getResponses, tallyResponses } from './survey-responses'
 
 const validInput = {
   title: 'Horario de otoño',
@@ -133,5 +135,71 @@ describe('updateSurvey / deleteSurvey', () => {
     deleteSurvey(db, id)
     expect(getSurveyById(db, id)).toBeNull()
     expect(db.prepare('SELECT COUNT(*) as n FROM survey_questions WHERE survey_id = ?').get(id)).toEqual({ n: 0 })
+  })
+})
+
+describe('updateSurvey preserves question ids and existing responses', () => {
+  it('keeps a kept question´s id stable, so existing responses still tally after an edit', () => {
+    const db = createDb(':memory:')
+    addSubscriber(db, { name: 'Ana', email: 'ana@example.com' })
+    const created = createSurvey(db, {
+      title: 'Horario',
+      questions: [{ prompt: '¿Sábado o domingo?', type: 'single_choice', options: ['Sábado', 'Domingo'] }],
+    })
+    const surveyId = (created as { id: number }).id
+    const beforeEdit = getSurveyById(db, surveyId)!
+    const questionId = beforeEdit.questions[0].id
+
+    submitResponse(db, beforeEdit, { email: 'ana@example.com', answers: { [questionId]: 'Sábado' } })
+
+    const updateResult = updateSurvey(db, surveyId, {
+      title: 'Horario actualizado',
+      questions: [
+        { id: questionId, prompt: '¿Sábado, domingo o entre semana?', type: 'single_choice', options: ['Sábado', 'Domingo', 'Entre semana'] },
+      ],
+    })
+    expect(updateResult).toEqual({ status: 'ok' })
+
+    const afterEdit = getSurveyById(db, surveyId)!
+    expect(afterEdit.questions[0].id).toBe(questionId)
+
+    const responses = getResponses(db, surveyId)
+    const tallies = tallyResponses(afterEdit, responses)
+    expect(tallies[0].optionCounts).toEqual([
+      { label: 'Sábado', count: 1 },
+      { label: 'Domingo', count: 0 },
+      { label: 'Entre semana', count: 0 },
+    ])
+  })
+
+  it('removing a question deletes its options but does not disturb a kept question´s tally', () => {
+    const db = createDb(':memory:')
+    addSubscriber(db, { name: 'Ana', email: 'ana@example.com' })
+    const created = createSurvey(db, {
+      title: 'Horario',
+      questions: [
+        { prompt: '¿Sábado o domingo?', type: 'single_choice', options: ['Sábado', 'Domingo'] },
+        { prompt: 'Comentarios', type: 'text' },
+      ],
+    })
+    const surveyId = (created as { id: number }).id
+    const beforeEdit = getSurveyById(db, surveyId)!
+    const [q1, q2] = beforeEdit.questions
+    submitResponse(db, beforeEdit, { email: 'ana@example.com', answers: { [q1.id]: 'Sábado', [q2.id]: 'Hola' } })
+
+    updateSurvey(db, surveyId, {
+      title: 'Horario',
+      questions: [{ id: q1.id, prompt: '¿Sábado o domingo?', type: 'single_choice', options: ['Sábado', 'Domingo'] }],
+    })
+
+    const afterEdit = getSurveyById(db, surveyId)!
+    expect(afterEdit.questions).toHaveLength(1)
+    expect(afterEdit.questions[0].id).toBe(q1.id)
+    const responses = getResponses(db, surveyId)
+    const tallies = tallyResponses(afterEdit, responses)
+    expect(tallies[0].optionCounts).toEqual([
+      { label: 'Sábado', count: 1 },
+      { label: 'Domingo', count: 0 },
+    ])
   })
 })
