@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import Link from 'next/link'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
@@ -17,6 +19,7 @@ export default async function ActivitiesListPage() {
     <main className="signup-section">
       <div className="signup-inner">
         <h2>Actividades</h2>
+        <Link href="/admin/surveys">Encuestas</Link>
         <Link href="/admin/activities/new" className="cta-button">
           Nueva actividad
         </Link>

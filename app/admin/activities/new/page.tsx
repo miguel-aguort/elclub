@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { isValidSessionCookie, ADMIN_SESSION_COOKIE } from '@/lib/admin-auth'

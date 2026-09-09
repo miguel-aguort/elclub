@@ -50,20 +50,32 @@ export default function Home() {
             <p className="schedule-note">Aún no hay actividades programadas. Vuelve pronto.</p>
           ) : (
             <div className="schedule-list">
-              {upcomingEvents.map((event) => (
-                <div key={event.id} className="schedule-row">
-                  <div className="schedule-when">
-                    <span className="schedule-day">
-                      {new Date(event.eventAt).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })}
+              {upcomingEvents.map((event) => {
+                const eventDate = new Date(event.eventAt)
+                return (
+                  <div key={event.id} className="schedule-row">
+                    <div className="schedule-when">
+                      <span className="schedule-day">
+                        {eventDate.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })}
+                      </span>
+                      <span className="schedule-time">
+                        {eventDate.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
+                      </span>
+                    </div>
+                    <span className="schedule-title">
+                      {event.link ? (
+                        <a href={event.link} target="_blank" rel="noopener noreferrer">
+                          {event.title}
+                        </a>
+                      ) : (
+                        event.title
+                      )}
                     </span>
-                    <span className="schedule-time">
-                      {new Date(event.eventAt).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
-                    </span>
+                    <span className="schedule-place">{event.location}</span>
+                    <p className="schedule-note">{event.description}</p>
                   </div>
-                  <span className="schedule-title">{event.title}</span>
-                  <span className="schedule-place">{event.location}</span>
-                </div>
-              ))}
+                )
+              })}
             </div>
           )}
         </section>

@@ -19,6 +19,7 @@ export default async function SurveysListPage() {
     <main className="signup-section">
       <div className="signup-inner">
         <h2>Encuestas</h2>
+        <Link href="/admin/activities">Actividades</Link>
         <Link href="/admin/surveys/new" className="cta-button">
           Nueva encuesta
         </Link>

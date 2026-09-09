@@ -1,6 +1,7 @@
-import { notFound } from 'next/navigation'
+export const dynamic = 'force-dynamic'
+
+import { notFound, redirect } from 'next/navigation'
 import { cookies } from 'next/headers'
-import { redirect } from 'next/navigation'
 import { getDb } from '@/lib/db'
 import { getEventById } from '@/lib/events'
 import { isValidSessionCookie, ADMIN_SESSION_COOKIE } from '@/lib/admin-auth'
