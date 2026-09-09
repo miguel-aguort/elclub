@@ -1,6 +1,6 @@
 import type Database from 'better-sqlite3'
 import { isSubscribedEmail } from './subscribers'
-import type { Survey } from './surveys'
+import type { QuestionType, Survey } from './surveys'
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
@@ -52,4 +52,41 @@ export function submitResponse(db: Database.Database, survey: Survey, input: Res
   ).run(survey.id, email, JSON.stringify(input.answers))
 
   return { status: 'ok' }
+}
+
+export interface ResponseRow {
+  email: string
+  answers: Record<string, string>
+  updatedAt: string
+}
+
+export function getResponses(db: Database.Database, surveyId: number): ResponseRow[] {
+  const rows = db
+    .prepare('SELECT email, answers_json, updated_at FROM survey_responses WHERE survey_id = ? ORDER BY updated_at DESC')
+    .all(surveyId) as Array<{ email: string; answers_json: string; updated_at: string }>
+  return rows.map((row) => ({ email: row.email, answers: JSON.parse(row.answers_json), updatedAt: row.updated_at }))
+}
+
+export interface QuestionTally {
+  questionId: number
+  prompt: string
+  type: QuestionType
+  optionCounts?: { label: string; count: number }[]
+  textAnswers?: { email: string; answer: string }[]
+}
+
+export function tallyResponses(survey: Survey, responses: ResponseRow[]): QuestionTally[] {
+  return survey.questions.map((question) => {
+    if (question.type === 'single_choice') {
+      const optionCounts = question.options.map((option) => ({
+        label: option.label,
+        count: responses.filter((r) => r.answers[String(question.id)] === option.label).length,
+      }))
+      return { questionId: question.id, prompt: question.prompt, type: question.type, optionCounts }
+    }
+    const textAnswers = responses
+      .filter((r) => r.answers[String(question.id)])
+      .map((r) => ({ email: r.email, answer: r.answers[String(question.id)] }))
+    return { questionId: question.id, prompt: question.prompt, type: question.type, textAnswers }
+  })
 }

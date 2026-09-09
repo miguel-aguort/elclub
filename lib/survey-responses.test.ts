@@ -3,7 +3,7 @@ import type Database from 'better-sqlite3'
 import { createDb } from './db'
 import { addSubscriber } from './subscribers'
 import { createSurvey, getSurveyBySlug, type Survey } from './surveys'
-import { validateResponseInput, submitResponse } from './survey-responses'
+import { validateResponseInput, submitResponse, getResponses, tallyResponses } from './survey-responses'
 
 describe('validateResponseInput / submitResponse', () => {
   let db: Database.Database
@@ -73,5 +73,48 @@ describe('validateResponseInput / submitResponse', () => {
     expect(rows).toHaveLength(1)
     const answers = JSON.parse((rows[0] as { answers_json: string }).answers_json)
     expect(answers[q1.id]).toBe('Domingo')
+  })
+})
+
+describe('getResponses / tallyResponses', () => {
+  let db: Database.Database
+  let survey: Survey
+
+  beforeEach(() => {
+    db = createDb(':memory:')
+    addSubscriber(db, { name: 'Ana', email: 'ana@example.com' })
+    addSubscriber(db, { name: 'Bea', email: 'bea@example.com' })
+    createSurvey(db, {
+      title: 'Horario',
+      questions: [
+        { prompt: '¿Sábado o domingo?', type: 'single_choice', options: ['Sábado', 'Domingo'] },
+        { prompt: 'Comentarios', type: 'text' },
+      ],
+    })
+    survey = getSurveyBySlug(db, 'horario')!
+    const [q1, q2] = survey.questions
+    submitResponse(db, survey, { email: 'ana@example.com', answers: { [q1.id]: 'Sábado', [q2.id]: 'Genial' } })
+    submitResponse(db, survey, { email: 'bea@example.com', answers: { [q1.id]: 'Sábado', [q2.id]: 'Perfecto' } })
+  })
+
+  it('lists all responses for a survey', () => {
+    const responses = getResponses(db, survey.id)
+    expect(responses).toHaveLength(2)
+    expect(responses.map((r) => r.email).sort()).toEqual(['ana@example.com', 'bea@example.com'])
+  })
+
+  it('tallies single_choice answers and lists text answers', () => {
+    const responses = getResponses(db, survey.id)
+    const tallies = tallyResponses(survey, responses)
+
+    const choiceTally = tallies[0]
+    expect(choiceTally.optionCounts).toEqual([
+      { label: 'Sábado', count: 2 },
+      { label: 'Domingo', count: 0 },
+    ])
+
+    const textTally = tallies[1]
+    expect(textTally.textAnswers).toHaveLength(2)
+    expect(textTally.textAnswers?.map((a) => a.answer).sort()).toEqual(['Genial', 'Perfecto'])
   })
 })
