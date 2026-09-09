@@ -14,6 +14,41 @@ function initSchema(database: Database.Database) {
       created_at TEXT NOT NULL DEFAULT (datetime('now'))
     )
   `)
+
+  database.exec(`
+    CREATE TABLE IF NOT EXISTS surveys (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      slug TEXT NOT NULL UNIQUE,
+      title TEXT NOT NULL,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
+    CREATE TABLE IF NOT EXISTS survey_questions (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      survey_id INTEGER NOT NULL REFERENCES surveys(id),
+      prompt TEXT NOT NULL,
+      type TEXT NOT NULL CHECK (type IN ('single_choice', 'text')),
+      required INTEGER NOT NULL DEFAULT 1,
+      position INTEGER NOT NULL
+    );
+
+    CREATE TABLE IF NOT EXISTS survey_question_options (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      question_id INTEGER NOT NULL REFERENCES survey_questions(id),
+      label TEXT NOT NULL,
+      position INTEGER NOT NULL
+    );
+
+    CREATE TABLE IF NOT EXISTS survey_responses (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      survey_id INTEGER NOT NULL REFERENCES surveys(id),
+      email TEXT NOT NULL,
+      answers_json TEXT NOT NULL,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+      UNIQUE (survey_id, email)
+    )
+  `)
 }
 
 export function createDb(path: string): Database.Database {
