@@ -31,4 +31,9 @@ describe('middleware', () => {
     })
     expect(middleware(request).status).toBe(200)
   })
+
+  it('lets an unauthenticated POST to /api/admin/login through', () => {
+    const response = middleware(new NextRequest('http://localhost/api/admin/login', { method: 'POST' }))
+    expect(response.status).toBe(200)
+  })
 })
