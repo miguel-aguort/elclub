@@ -1,6 +1,12 @@
-import { describe, it, expect } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { describe, it, expect, beforeAll, afterEach } from 'vitest'
+import { render, screen, cleanup } from '@testing-library/react'
 import Home from './page'
+
+beforeAll(() => {
+  process.env.DB_PATH = ':memory:'
+})
+
+afterEach(() => cleanup())
 
 describe('Home page', () => {
   it('renders the activity sections and the signup form', () => {
@@ -18,5 +24,10 @@ describe('Home page', () => {
     for (const link of links) {
       expect(link).toHaveAttribute('target', '_blank')
     }
+  })
+
+  it('shows an empty-state message when there are no upcoming activities', () => {
+    render(<Home />)
+    expect(screen.getByText(/aún no hay actividades programadas/i)).toBeInTheDocument()
   })
 })
