@@ -18,6 +18,10 @@ Visit http://localhost:3000.
 Copy `.env.local.example` to `.env.local` and set `INSTAGRAM_URL`
 to the club's real Instagram profile URL before deploying.
 
+Also set `ADMIN_PASSWORD` to a password of your choice — it protects
+`/admin` (survey builder and results) and `/api/admin/*`. There's no
+per-admin account, just this one shared password.
+
 ## Deployment (AWS EC2 t3.micro, Free Tier)
 
 The app ships as a Docker image. SQLite needs a persistent disk, so this
@@ -94,6 +98,7 @@ Create the data directory and start the container the first time (see
       sudo docker run -d --restart unless-stopped -p 80:3000 \
         -v /var/lib/elclub/data:/app/data \
         -e INSTAGRAM_URL=https://instagram.com/<handle> \
+        -e ADMIN_PASSWORD=<password> \
         --name elclub-web \
         elclub-web:latest"
 
@@ -114,6 +119,7 @@ new builds straight to the instance instead of through ECR:
       sudo docker run -d --restart unless-stopped -p 80:3000 \
         -v /var/lib/elclub/data:/app/data \
         -e INSTAGRAM_URL=https://instagram.com/<handle> \
+        -e ADMIN_PASSWORD=<password> \
         --name elclub-web \
         elclub-web:latest"
 
