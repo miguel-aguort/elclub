@@ -8,7 +8,15 @@ function adminPassword(): string {
 
 export function checkPassword(input: string): boolean {
   const expected = adminPassword()
-  return expected.length > 0 && input === expected
+  if (expected.length === 0) return false
+  // Use constant-time comparison to prevent timing attacks
+  try {
+    const a = Buffer.from(input)
+    const b = Buffer.from(expected)
+    return a.length === b.length && timingSafeEqual(a, b)
+  } catch {
+    return false
+  }
 }
 
 export function createSessionCookieValue(): string {
@@ -17,6 +25,9 @@ export function createSessionCookieValue(): string {
 
 export function isValidSessionCookie(value: string | undefined | null): boolean {
   if (!value) return false
+  // Fail closed: return false if ADMIN_PASSWORD is unset/empty
+  const pwd = adminPassword()
+  if (!pwd) return false
   const expected = createSessionCookieValue()
   const a = Buffer.from(value)
   const b = Buffer.from(expected)

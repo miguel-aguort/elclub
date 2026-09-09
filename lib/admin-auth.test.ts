@@ -51,4 +51,31 @@ describe('admin-auth', () => {
     const request = new Request('http://localhost/admin/surveys')
     expect(hasValidSession(request)).toBe(false)
   })
+
+  it('rejects a session cookie when ADMIN_PASSWORD is unset, even with the publicly-computable HMAC-of-empty-string', () => {
+    // Compute what the old (buggy) code would have accepted
+    const { createHmac } = require('node:crypto')
+    const publiclyComputedValue = createHmac('sha256', '').update('elclub-admin-session').digest('hex')
+
+    // Delete the password
+    delete process.env.ADMIN_PASSWORD
+
+    // isValidSessionCookie must return false, not accept the publicly-known value
+    expect(isValidSessionCookie(publiclyComputedValue)).toBe(false)
+  })
+
+  it('validates a session cookie among multiple cookies in the header', () => {
+    const value = createSessionCookieValue()
+    const request = new Request('http://localhost/admin/surveys', {
+      headers: { cookie: `other=1; ${ADMIN_SESSION_COOKIE}=${value}; foo=bar` },
+    })
+    expect(hasValidSession(request)).toBe(true)
+  })
+
+  it('rejects a request with a substring-colliding cookie name (not_admin_session)', () => {
+    const request = new Request('http://localhost/admin/surveys', {
+      headers: { cookie: 'not_admin_session=something' },
+    })
+    expect(hasValidSession(request)).toBe(false)
+  })
 })
