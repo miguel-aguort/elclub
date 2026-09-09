@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { createDb } from './db'
-import { validateSubscribeInput, addSubscriber } from './subscribers'
+import { validateSubscribeInput, addSubscriber, isSubscribedEmail } from './subscribers'
 import type Database from 'better-sqlite3'
 
 describe('validateSubscribeInput', () => {
@@ -49,5 +49,22 @@ describe('addSubscriber', () => {
     addSubscriber(db, { name: 'Ana', email: 'ana@example.com' })
     const result = addSubscriber(db, { name: 'Ana Again', email: 'ana@example.com' })
     expect(result).toEqual({ status: 'duplicate' })
+  })
+})
+
+describe('isSubscribedEmail', () => {
+  let db: Database.Database
+
+  beforeEach(() => {
+    db = createDb(':memory:')
+  })
+
+  it('returns true for a known subscriber email', () => {
+    addSubscriber(db, { name: 'Ana', email: 'ana@example.com' })
+    expect(isSubscribedEmail(db, 'ana@example.com')).toBe(true)
+  })
+
+  it('returns false for an unknown email', () => {
+    expect(isSubscribedEmail(db, 'nobody@example.com')).toBe(false)
   })
 })

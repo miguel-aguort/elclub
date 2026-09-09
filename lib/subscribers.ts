@@ -37,3 +37,8 @@ export function addSubscriber(db: Database.Database, input: SubscribeInput): Sub
     throw err
   }
 }
+
+export function isSubscribedEmail(db: Database.Database, email: string): boolean {
+  const row = db.prepare('SELECT 1 FROM subscribers WHERE email = ?').get(email.trim())
+  return !!row
+}
