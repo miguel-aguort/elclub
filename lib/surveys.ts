@@ -171,3 +171,61 @@ export function listSurveys(db: Database.Database): SurveySummary[] {
   }>
   return rows.map((row) => ({ id: row.id, slug: row.slug, title: row.title, createdAt: row.created_at }))
 }
+
+export type UpdateSurveyResult =
+  | { status: 'ok' }
+  | { status: 'invalid'; error: SurveyValidationError }
+  | { status: 'not_found' }
+
+export function updateSurvey(db: Database.Database, id: number, input: SurveyInput): UpdateSurveyResult {
+  const existing = db.prepare('SELECT id FROM surveys WHERE id = ?').get(id)
+  if (!existing) {
+    return { status: 'not_found' }
+  }
+
+  const error = validateSurveyInput(input)
+  if (error) {
+    return { status: 'invalid', error }
+  }
+
+  const deleteOptions = db.prepare(
+    'DELETE FROM survey_question_options WHERE question_id IN (SELECT id FROM survey_questions WHERE survey_id = ?)'
+  )
+  const deleteQuestions = db.prepare('DELETE FROM survey_questions WHERE survey_id = ?')
+  const updateTitle = db.prepare('UPDATE surveys SET title = ? WHERE id = ?')
+  const insertQuestion = db.prepare(
+    'INSERT INTO survey_questions (survey_id, prompt, type, required, position) VALUES (?, ?, ?, 1, ?)'
+  )
+  const insertOption = db.prepare(
+    'INSERT INTO survey_question_options (question_id, label, position) VALUES (?, ?, ?)'
+  )
+
+  db.transaction(() => {
+    deleteOptions.run(id)
+    deleteQuestions.run(id)
+    updateTitle.run(input.title.trim(), id)
+    input.questions.forEach((question, index) => {
+      const questionId = Number(
+        insertQuestion.run(id, question.prompt.trim(), question.type, index).lastInsertRowid
+      )
+      if (question.type === 'single_choice') {
+        ;(question.options ?? [])
+          .filter((o) => o.trim())
+          .forEach((label, optionIndex) => insertOption.run(questionId, label.trim(), optionIndex))
+      }
+    })
+  })()
+
+  return { status: 'ok' }
+}
+
+export function deleteSurvey(db: Database.Database, id: number): void {
+  db.transaction(() => {
+    db.prepare(
+      'DELETE FROM survey_question_options WHERE question_id IN (SELECT id FROM survey_questions WHERE survey_id = ?)'
+    ).run(id)
+    db.prepare('DELETE FROM survey_responses WHERE survey_id = ?').run(id)
+    db.prepare('DELETE FROM survey_questions WHERE survey_id = ?').run(id)
+    db.prepare('DELETE FROM surveys WHERE id = ?').run(id)
+  })()
+}

@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import type Database from 'better-sqlite3'
 import { createDb } from './db'
-import { validateSurveyInput, createSurvey, getSurveyBySlug, getSurveyById, listSurveys } from './surveys'
+import { validateSurveyInput, createSurvey, getSurveyBySlug, getSurveyById, listSurveys, updateSurvey, deleteSurvey } from './surveys'
 
 const validInput = {
   title: 'Horario de otoño',
@@ -88,5 +88,50 @@ describe('createSurvey / getSurveyBySlug / getSurveyById / listSurveys', () => {
     createSurvey(db, { title: 'Segunda', questions: [{ prompt: 'X', type: 'text' as const }] })
     const surveys = listSurveys(db)
     expect(surveys.map((s) => s.title)).toEqual(['Segunda', 'Primera'])
+  })
+})
+
+describe('updateSurvey / deleteSurvey', () => {
+  let db: Database.Database
+
+  beforeEach(() => {
+    db = createDb(':memory:')
+  })
+
+  it('replaces the title and questions', () => {
+    const created = createSurvey(db, validInput)
+    const id = (created as { id: number }).id
+
+    const result = updateSurvey(db, id, {
+      title: 'Horario actualizado',
+      questions: [{ prompt: '¿Vienes?', type: 'text' }],
+    })
+
+    expect(result).toEqual({ status: 'ok' })
+    const survey = getSurveyById(db, id)
+    expect(survey?.title).toBe('Horario actualizado')
+    expect(survey?.questions).toHaveLength(1)
+    expect(survey?.questions[0].prompt).toBe('¿Vienes?')
+  })
+
+  it('returns not_found for an unknown id', () => {
+    const result = updateSurvey(db, 999, validInput)
+    expect(result).toEqual({ status: 'not_found' })
+  })
+
+  it('returns invalid without writing when the input fails validation', () => {
+    const created = createSurvey(db, validInput)
+    const id = (created as { id: number }).id
+    const result = updateSurvey(db, id, { title: '', questions: [] })
+    expect(result).toEqual({ status: 'invalid', error: { field: 'title' } })
+    expect(getSurveyById(db, id)?.title).toBe('Horario de otoño')
+  })
+
+  it('deletes a survey and its questions, options, and responses', () => {
+    const created = createSurvey(db, validInput)
+    const id = (created as { id: number }).id
+    deleteSurvey(db, id)
+    expect(getSurveyById(db, id)).toBeNull()
+    expect(db.prepare('SELECT COUNT(*) as n FROM survey_questions WHERE survey_id = ?').get(id)).toEqual({ n: 0 })
   })
 })
