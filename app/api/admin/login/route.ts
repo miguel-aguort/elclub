@@ -13,6 +13,7 @@ export async function POST(request: Request) {
     httpOnly: true,
     sameSite: 'lax',
     path: '/',
+    secure: true,
   })
   return response
 }
