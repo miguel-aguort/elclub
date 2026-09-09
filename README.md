@@ -136,6 +136,16 @@ public internet). No custom domain or ACM certificate needed. Costs
 nothing extra — within CloudFront's free tier (1TB/month egress, 10M
 requests, for the first 12 months).
 
+The distribution uses the AWS managed `CachingDisabled` cache policy
+(nothing is ever cached at the edge) and the managed `AllViewer` origin
+request policy (every cookie, header, and query string is forwarded to
+the origin). This matters for the `/admin` panel added for member
+surveys: it means the `admin_session` cookie always reaches the app, and
+no admin page can ever be served stale or public from CloudFront's cache.
+Keep both policies as-is (or equivalent) if the distribution config is
+ever touched, since a caching-enabled policy or a cookie-stripping origin
+request policy would break the admin login flow or expose admin pages.
+
 Once the club has a real domain, point it at the CloudFront distribution
 and request an ACM certificate for it (also free) instead of relying on
 the `cloudfront.net` address.
