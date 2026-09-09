@@ -49,6 +49,18 @@ function initSchema(database: Database.Database) {
       UNIQUE (survey_id, email)
     )
   `)
+
+  database.exec(`
+    CREATE TABLE IF NOT EXISTS events (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      title TEXT NOT NULL,
+      description TEXT NOT NULL,
+      location TEXT NOT NULL,
+      event_at TEXT NOT NULL,
+      link TEXT,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    )
+  `)
 }
 
 export function createDb(path: string): Database.Database {
