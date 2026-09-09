@@ -736,6 +736,27 @@ a:hover {
   outline-offset: 1px;
 }
 
+.signup-form textarea {
+  padding: 13px 15px;
+  font-size: 1rem;
+  font-family: inherit;
+  color: var(--fg);
+  background: var(--bg);
+  border: 1px solid rgba(245, 245, 242, 0.16);
+  border-radius: 10px;
+  min-height: 80px;
+  resize: vertical;
+}
+
+.signup-form textarea::placeholder {
+  color: rgba(120, 120, 115, 0.6);
+}
+
+.signup-form textarea:focus {
+  outline: 2px solid var(--fg);
+  outline-offset: 1px;
+}
+
 .signup-form .cta-button {
   margin-top: 6px;
   width: 100%;
