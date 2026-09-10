@@ -71,6 +71,30 @@ function initSchema(database: Database.Database) {
       UNIQUE (event_id, email)
     )
   `)
+
+  database.exec(`
+    CREATE TABLE IF NOT EXISTS schedule_sessions (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      day TEXT NOT NULL,
+      time TEXT NOT NULL,
+      title TEXT NOT NULL,
+      place TEXT NOT NULL,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    )
+  `)
+
+  const scheduleCount = (
+    database.prepare('SELECT COUNT(*) as count FROM schedule_sessions').get() as { count: number }
+  ).count
+  if (scheduleCount === 0) {
+    const insertSession = database.prepare(
+      'INSERT INTO schedule_sessions (day, time, title, place) VALUES (?, ?, ?, ?)'
+    )
+    insertSession.run('Martes', '19:00', 'Carrera de montaña', 'Parking de Canto Cochino')
+    insertSession.run('Jueves', '18:30', 'Escalada indoor', 'Rocódromo (centro)')
+    insertSession.run('Sábado', '09:00', 'Salida a roca / BTT', 'La Pedriza')
+    insertSession.run('Domingo', '08:30', 'Salida larga', 'Sierra de Guadarrama')
+  }
 }
 
 export function createDb(path: string): Database.Database {
