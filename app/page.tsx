@@ -1,5 +1,6 @@
 export const dynamic = 'force-dynamic'
 
+import Link from 'next/link'
 import { Hero } from '@/components/Hero'
 import { ActivitySection } from '@/components/ActivitySection'
 import { MountainSection } from '@/components/MountainSection'
@@ -63,16 +64,20 @@ export default function Home() {
                       </span>
                     </div>
                     <span className="schedule-title">
-                      {event.link ? (
-                        <a href={event.link} target="_blank" rel="noopener noreferrer">
-                          {event.title}
-                        </a>
-                      ) : (
-                        event.title
-                      )}
+                      <Link href={`/actividades/${event.id}`}>{event.title}</Link>
                     </span>
                     <span className="schedule-place">{event.location}</span>
-                    <p className="schedule-note">{event.description}</p>
+                    <p className="schedule-note">
+                      {event.description}
+                      {event.link && (
+                        <>
+                          {' '}
+                          <a href={event.link} target="_blank" rel="noopener noreferrer">
+                            Más información
+                          </a>
+                        </>
+                      )}
+                    </p>
                   </div>
                 )
               })}

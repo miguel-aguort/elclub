@@ -9,6 +9,7 @@ export function Header() {
       </a>
       <nav className="site-nav">
         <a href="#actividades">Actividades</a>
+        <a href="#proximas-actividades">Agenda</a>
         <a href="#montana">La Montaña</a>
         <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer">
           Instagram
