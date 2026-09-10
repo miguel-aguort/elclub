@@ -5,6 +5,13 @@ import { getDb } from '@/lib/db'
 import { getEventById } from '@/lib/events'
 import { EventSignupForm } from '@/components/EventSignupForm'
 
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+  const event = getEventById(getDb(), Number(id))
+  if (!event) return {}
+  return { title: `${event.title} — El Club!`, description: event.description }
+}
+
 export default async function ActividadPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const event = getEventById(getDb(), Number(id))

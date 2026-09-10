@@ -113,5 +113,6 @@ export function updateEvent(db: Database.Database, id: number, input: EventInput
 }
 
 export function deleteEvent(db: Database.Database, id: number): void {
+  db.prepare('DELETE FROM event_signups WHERE event_id = ?').run(id)
   db.prepare('DELETE FROM events WHERE id = ?').run(id)
 }

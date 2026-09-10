@@ -10,6 +10,8 @@ import {
   updateEvent,
   deleteEvent,
 } from './events'
+import { addSubscriber } from './subscribers'
+import { createEventSignup, listEventSignups } from './event-signups'
 
 const validInput = {
   title: 'Salida a La Pedriza',
@@ -153,5 +155,17 @@ describe('updateEvent / deleteEvent', () => {
 
   it('is a no-op deleting an id that does not exist', () => {
     expect(() => deleteEvent(db, 999)).not.toThrow()
+  })
+
+  it('cascades to delete the event signups', () => {
+    const created = createEvent(db, validInput)
+    const id = (created as { id: number }).id
+    addSubscriber(db, { name: 'Ana', email: 'ana@example.com' })
+    createEventSignup(db, id, { email: 'ana@example.com' })
+    expect(listEventSignups(db, id)).toHaveLength(1)
+
+    deleteEvent(db, id)
+
+    expect(listEventSignups(db, id)).toEqual([])
   })
 })
