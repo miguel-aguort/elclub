@@ -10,10 +10,14 @@ import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
 import { activities } from '@/lib/activities'
 import { getDb } from '@/lib/db'
-import { listUpcomingEvents } from '@/lib/events'
+import { listUpcomingEvents, listPastEvents } from '@/lib/events'
+import { listScheduleSessions } from '@/lib/schedule-sessions'
 
 export default function Home() {
-  const upcomingEvents = listUpcomingEvents(getDb())
+  const db = getDb()
+  const upcomingEvents = listUpcomingEvents(db)
+  const pastEvents = listPastEvents(db)
+  const scheduleSessions = listScheduleSessions(db)
 
   return (
     <>
@@ -40,7 +44,6 @@ export default function Home() {
         </section>
 
         <MountainSection />
-        <ScheduleSection />
 
         <section id="proximas-actividades" className="schedule-section">
           <div className="schedule-head">
@@ -84,6 +87,47 @@ export default function Home() {
             </div>
           )}
         </section>
+
+        {pastEvents.length > 0 && (
+          <section id="actividades-pasadas" className="schedule-section">
+            <div className="schedule-head">
+              <p className="eyebrow">Historial</p>
+              <h2>Actividades pasadas</h2>
+            </div>
+            <div className="schedule-list">
+              {pastEvents.map((event) => {
+                const eventDate = new Date(event.eventAt)
+                return (
+                  <div key={event.id} className="schedule-row">
+                    <div className="schedule-when">
+                      <span className="schedule-day">
+                        {eventDate.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })}
+                      </span>
+                      <span className="schedule-time">
+                        {eventDate.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
+                      </span>
+                    </div>
+                    <span className="schedule-title">{event.title}</span>
+                    <span className="schedule-place">{event.location}</span>
+                    <p className="schedule-note">
+                      {event.description}
+                      {event.link && (
+                        <>
+                          {' '}
+                          <a href={event.link} target="_blank" rel="noopener noreferrer">
+                            Más información
+                          </a>
+                        </>
+                      )}
+                    </p>
+                  </div>
+                )
+              })}
+            </div>
+          </section>
+        )}
+
+        <ScheduleSection sessions={scheduleSessions} />
 
         <section id="unete" className="signup-section">
           <div className="signup-inner">

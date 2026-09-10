@@ -49,4 +49,18 @@ describe('Home page', () => {
       `/actividades/${id}`
     )
   })
+
+  it('shows a past activity without a link to its activity page', () => {
+    createEvent(getDb(), {
+      title: 'Salida ya realizada',
+      description: 'Fue genial.',
+      location: 'La Pedriza',
+      eventAt: '2020-01-01T09:00',
+    })
+
+    render(<Home />)
+
+    expect(screen.getByText('Salida ya realizada')).toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: 'Salida ya realizada' })).not.toBeInTheDocument()
+  })
 })
