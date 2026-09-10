@@ -92,6 +92,16 @@ export function listUpcomingEvents(db: Database.Database): Event[] {
     .sort((a, b) => new Date(a.eventAt).getTime() - new Date(b.eventAt).getTime())
 }
 
+export function listPastEvents(db: Database.Database, limit = 5): Event[] {
+  const rows = db.prepare('SELECT * FROM events').all() as EventRow[]
+  const now = new Date()
+  return rows
+    .map(mapRow)
+    .filter((event) => new Date(event.eventAt) < now)
+    .sort((a, b) => new Date(b.eventAt).getTime() - new Date(a.eventAt).getTime())
+    .slice(0, limit)
+}
+
 export type UpdateEventResult =
   | { status: 'ok' }
   | { status: 'invalid'; error: EventValidationError }

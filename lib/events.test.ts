@@ -7,6 +7,7 @@ import {
   getEventById,
   listEvents,
   listUpcomingEvents,
+  listPastEvents,
   updateEvent,
   deleteEvent,
 } from './events'
@@ -116,6 +117,42 @@ describe('listUpcomingEvents', () => {
   it('returns an empty list when there are no upcoming events', () => {
     createEvent(db, { ...validInput, title: 'Ya pasó', eventAt: '2026-09-01T09:00' })
     expect(listUpcomingEvents(db)).toEqual([])
+  })
+})
+
+describe('listPastEvents', () => {
+  let db: Database.Database
+
+  beforeEach(() => {
+    db = createDb(':memory:')
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date('2026-09-15T00:00:00Z'))
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
+  it('includes only past events, sorted most recent first', () => {
+    createEvent(db, { ...validInput, title: 'Futura', eventAt: '2026-12-01T09:00' })
+    createEvent(db, { ...validInput, title: 'Más antigua', eventAt: '2026-08-01T09:00' })
+    createEvent(db, { ...validInput, title: 'Más reciente', eventAt: '2026-09-01T09:00' })
+
+    const past = listPastEvents(db)
+    expect(past.map((e) => e.title)).toEqual(['Más reciente', 'Más antigua'])
+  })
+
+  it('limits to the 5 most recent past events by default', () => {
+    for (let i = 1; i <= 7; i++) {
+      createEvent(db, { ...validInput, title: `Pasada ${i}`, eventAt: `2026-0${i > 6 ? 8 : i}-01T09:00` })
+    }
+    const past = listPastEvents(db)
+    expect(past).toHaveLength(5)
+  })
+
+  it('returns an empty list when there are no past events', () => {
+    createEvent(db, { ...validInput, title: 'Futura', eventAt: '2026-12-01T09:00' })
+    expect(listPastEvents(db)).toEqual([])
   })
 })
 
