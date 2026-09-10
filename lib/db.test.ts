@@ -9,6 +9,7 @@ describe('createDb', () => {
       .all()
       .map((row) => (row as { name: string }).name)
     expect(tables).toEqual([
+      'event_signups',
       'events',
       'subscribers',
       'survey_question_options',

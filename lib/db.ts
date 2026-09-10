@@ -61,6 +61,16 @@ function initSchema(database: Database.Database) {
       created_at TEXT NOT NULL DEFAULT (datetime('now'))
     )
   `)
+
+  database.exec(`
+    CREATE TABLE IF NOT EXISTS event_signups (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      event_id INTEGER NOT NULL REFERENCES events(id),
+      email TEXT NOT NULL,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      UNIQUE (event_id, email)
+    )
+  `)
 }
 
 export function createDb(path: string): Database.Database {
