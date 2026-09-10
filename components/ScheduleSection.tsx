@@ -1,6 +1,6 @@
-import { schedule } from '@/lib/schedule'
+import type { ScheduleSession } from '@/lib/schedule-sessions'
 
-export function ScheduleSection() {
+export function ScheduleSection({ sessions }: { sessions: ScheduleSession[] }) {
   return (
     <section id="horario" className="schedule-section">
       <div className="schedule-head">
@@ -8,8 +8,8 @@ export function ScheduleSection() {
         <h2>El ritmo de la semana</h2>
       </div>
       <div className="schedule-list">
-        {schedule.map((row) => (
-          <div key={`${row.day}-${row.title}`} className="schedule-row">
+        {sessions.map((row) => (
+          <div key={row.id} className="schedule-row">
             <div className="schedule-when">
               <span className="schedule-day">{row.day}</span>
               <span className="schedule-time">{row.time}</span>
