@@ -20,6 +20,8 @@ export default async function SurveysListPage() {
       <div className="signup-inner">
         <h2>Encuestas</h2>
         <Link href="/admin/activities">Actividades</Link>
+        {' — '}
+        <Link href="/admin/schedule">Horario</Link>
         <Link href="/admin/surveys/new" className="cta-button">
           Nueva encuesta
         </Link>

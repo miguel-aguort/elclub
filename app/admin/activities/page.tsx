@@ -20,6 +20,8 @@ export default async function ActivitiesListPage() {
       <div className="signup-inner">
         <h2>Actividades</h2>
         <Link href="/admin/surveys">Encuestas</Link>
+        {' — '}
+        <Link href="/admin/schedule">Horario</Link>
         <Link href="/admin/activities/new" className="cta-button">
           Nueva actividad
         </Link>
