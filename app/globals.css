@@ -866,3 +866,137 @@ a:hover {
     gap: 6px;
   }
 }
+/* ───────────────────────────────────────────────────────────────────────────
+   Capa de color de marca — pegar AL FINAL de app/globals.css
+
+   Tomada de las camisetas del club: amarillo dorado como único acento y
+   morado reservado a la zona de conversión. La base sigue siendo negra y
+   sobria; el color solo aparece donde señala algo.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+:root {
+  --accent: #f5c31c;
+  --cta: #f5c31c;
+  --cta-fg: #0b0b0b;
+  --accent-surface: #1b1133;
+}
+
+/* Eyebrows y numeración */
+
+.eyebrow,
+.hero-eyebrow,
+.activity-number {
+  color: var(--accent);
+}
+
+/* Cifras de las stats */
+
+.stat-value {
+  color: var(--accent);
+}
+
+/* Puntos de la cinta */
+
+.marquee-dot {
+  background: var(--accent);
+  opacity: 1;
+}
+
+/* Botones: fondo dorado, texto negro. Al pasar por encima se vacían. */
+
+.cta-button {
+  background: var(--cta);
+  color: var(--cta-fg);
+  border-color: var(--cta);
+}
+
+.cta-button:hover {
+  background: transparent;
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.site-nav .nav-cta {
+  background: var(--cta);
+  color: var(--cta-fg);
+}
+
+.site-nav .nav-cta:hover {
+  color: var(--cta-fg);
+  opacity: 0.9;
+}
+
+/* Enlaces dentro de la agenda */
+
+.schedule-title a,
+.schedule-note a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.schedule-title a {
+  text-decoration: none;
+}
+
+.schedule-title a:hover {
+  text-decoration: underline;
+}
+
+/* Zona de conversión sobre superficie morada */
+
+.signup-section {
+  background: var(--accent-surface);
+}
+
+/* Carrusel de camisetas del hero */
+
+.hero-carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  cursor: pointer;
+  border: 1px solid rgba(245, 245, 242, 0.3);
+  background: rgba(11, 11, 11, 0.55);
+  color: #f5f5f2;
+  backdrop-filter: blur(6px);
+  transition: background 0.15s ease;
+}
+
+.hero-carousel-btn:hover {
+  background: rgba(11, 11, 11, 0.8);
+}
+
+.hero-carousel-btn--prev {
+  left: 12px;
+}
+
+.hero-carousel-btn--next {
+  right: 12px;
+}
+
+.hero-dots {
+  position: absolute;
+  right: 14px;
+  bottom: 16px;
+  display: flex;
+  gap: 7px;
+}
+
+.hero-dot {
+  display: block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgba(245, 245, 242, 0.35);
+}
+
+.hero-dot--active {
+  background: #f5f5f2;
+}

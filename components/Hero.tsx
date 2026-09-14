@@ -1,4 +1,7 @@
+'use client'
+
 import Image from 'next/image'
+import { useState } from 'react'
 
 const MARQUEE = [
   'Carrera de Montaña',
@@ -9,7 +12,26 @@ const MARQUEE = [
   'Sierra de Guadarrama',
 ]
 
+const TEES = [
+  {
+    src: '/el-club-tee-morada.jpg',
+    alt: 'Camiseta de El Club! en morado con el logo de la cresta de montaña',
+  },
+  {
+    src: '/el-club-tee-amarilla.jpg',
+    alt: 'Camiseta de El Club! en amarillo con el logo de la cresta de montaña',
+  },
+  {
+    src: '/el-club-tee-negra.jpg',
+    alt: 'Camiseta de El Club! en negro con el logo de la cresta de montaña',
+  },
+]
+
 export function Hero() {
+  const [index, setIndex] = useState(0)
+  const step = (delta: number) => setIndex((i) => (i + delta + TEES.length) % TEES.length)
+  const tee = TEES[index]
+
   return (
     <section id="hero" className="hero">
       <svg
@@ -78,14 +100,45 @@ export function Hero() {
 
         <div className="hero-image-frame">
           <Image
-            src="/el-club-tee.jpg"
-            alt="Camiseta de El Club! con el logo de la cresta de montaña"
+            key={tee.src}
+            src={tee.src}
+            alt={tee.alt}
             width={1024}
             height={1024}
             className="hero-image"
-            priority
+            priority={index === 0}
           />
           <span className="hero-image-caption">Camiseta de socios — Vol. 01</span>
+
+          <button
+            type="button"
+            onClick={() => step(-1)}
+            aria-label="Camiseta anterior"
+            className="hero-carousel-btn hero-carousel-btn--prev"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M15 6l-6 6 6 6" />
+            </svg>
+          </button>
+          <button
+            type="button"
+            onClick={() => step(1)}
+            aria-label="Camiseta siguiente"
+            className="hero-carousel-btn hero-carousel-btn--next"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M9 6l6 6-6 6" />
+            </svg>
+          </button>
+
+          <div className="hero-dots">
+            {TEES.map((t, i) => (
+              <span
+                key={t.src}
+                className={i === index ? 'hero-dot hero-dot--active' : 'hero-dot'}
+              />
+            ))}
+          </div>
         </div>
       </div>
 

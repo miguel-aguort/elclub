@@ -13,7 +13,7 @@ export const activities: Activity[] = [
     number: '01',
     title: 'Carrera de Montaña',
     description: 'Salidas grupales semanales por los senderos de la sierra, para todos los ritmos.',
-    image: 'https://picsum.photos/id/1018/900/700?grayscale',
+    image: 'https://picsum.photos/id/1018/900/700',
     icon: 'run',
   },
   {
@@ -21,7 +21,7 @@ export const activities: Activity[] = [
     number: '02',
     title: 'Escalada',
     description: 'Vías deportivas y clásicas, sesiones indoor y salidas a roca para todos los niveles.',
-    image: 'https://picsum.photos/id/1015/900/700?grayscale',
+    image: 'https://picsum.photos/id/1015/900/700',
     icon: 'climb',
   },
   {
@@ -29,7 +29,7 @@ export const activities: Activity[] = [
     number: '03',
     title: 'Bici',
     description: 'Rutas de carretera y montaña, desde paseos tranquilos hasta subidas largas.',
-    image: 'https://picsum.photos/id/1016/900/700?grayscale',
+    image: 'https://picsum.photos/id/1016/900/700',
     icon: 'bike',
   },
 ]

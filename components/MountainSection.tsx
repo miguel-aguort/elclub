@@ -6,7 +6,7 @@ export function MountainSection() {
       <div className="mountain-inner">
         <div className="mountain-photo">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="https://picsum.photos/id/1036/900/1100?grayscale" alt="La Pedriza" loading="lazy" />
+          <img src="https://picsum.photos/id/1036/900/1100" alt="La Pedriza" loading="lazy" />
         </div>
         <div className="mountain-content">
           <p className="eyebrow">La Montaña</p>
